@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="description" content="Aplikasi Winamp berbasis Webamp dengan pengalaman seperti native app">
+    <meta name="description" content="Aplikasi Winamp berbasis Webamp dengan pengalaman seperti native app. Sudah siap dijalankan di localhost atau HTTPS.">
     <title>PlayWinamp dengan Webamp</title>
     <link rel="manifest" href="./manifest.webmanifest">
     <style>
@@ -89,6 +89,20 @@
             display: none;
         }
 
+        .status {
+            position: fixed;
+            left: 16px;
+            bottom: 16px;
+            z-index: 40;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #e5e7eb;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 12px;
+            letter-spacing: 0.02em;
+        }
+
         @media (max-width: 700px) {
             .app-shell {
                 padding: 12px;
@@ -104,6 +118,12 @@
                 padding: 8px 12px;
                 font-size: 12px;
             }
+
+            .status {
+                left: 12px;
+                bottom: 12px;
+                right: 12px;
+            }
         }
     </style>
 </head>
@@ -115,15 +135,35 @@
         </div>
 
         <div id="winamp-container"></div>
+        <div class="status" id="status">Memuat demo audio…</div>
     </div>
 
     <script src="https://unpkg.com/webamp@1.5.0/built/webamp.bundle.min.js"></script>
     <script>
+        const DEMO_TRACK = {
+            metaData: {
+                artist: 'Webamp Demo',
+                title: 'Demo Track'
+            },
+            url: 'https://raw.githubusercontent.com/captbaritone/webamp/master/examples/media/track1.mp3'
+        };
+
+        const statusEl = document.getElementById('status');
+
         const webamp = new Webamp({
-            // initialTracks: [{ metaData: { artist: "Artis", title: "Lagu" }, url: "lagu.mp3" }]
+            initialTracks: [DEMO_TRACK],
+            initialSkin: {
+                url: 'https://raw.githubusercontent.com/captbaritone/webamp/master/skins/Topaz.wsz'
+            }
         });
 
         webamp.renderWhenReady(document.getElementById('winamp-container'));
+
+        webamp.onTrackDidChange((track) => {
+            if (track && track.metaData) {
+                statusEl.textContent = `${track.metaData.artist || 'Unknown'} - ${track.metaData.title || 'Track'}`;
+            }
+        });
 
         let deferredPrompt = null;
         const installBtn = document.getElementById('install-btn');
