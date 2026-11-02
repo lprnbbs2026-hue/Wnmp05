@@ -51,20 +51,35 @@
         }
 
         #winamp-container {
-            width: 100vw;
-            height: 100vh;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            padding: 0;
         }
 
         #winamp-container > * {
             width: 100vw !important;
             max-width: 100vw !important;
-            height: calc(100vh - 10px) !important;
-            max-height: calc(100vh - 10px) !important;
+            min-width: 0 !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            margin: 0 auto !important;
+        }
+
+        #winamp-container .webamp-app,
+        #winamp-container .webamp,
+        #winamp-container .webamp-app-container,
+        #winamp-container .webamp-viewport {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 0 !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
         }
 
         .native-actions {
@@ -171,19 +186,25 @@
             }
         });
 
-        const stretchWebamp = () => {
-            const webampNode = appContainer.querySelector('div');
-            if (webampNode) {
-                webampNode.style.width = '100vw';
-                webampNode.style.maxWidth = '100vw';
-                webampNode.style.height = 'calc(100vh - 10px)';
-                webampNode.style.maxHeight = 'calc(100vh - 10px)';
+        const forceFullViewport = () => {
+            const root = appContainer.querySelector('.webamp-app, .webamp, .webamp-app-container, .webamp-viewport');
+            if (root) {
+                root.style.width = '100vw';
+                root.style.maxWidth = '100vw';
+                root.style.height = '100vh';
+                root.style.maxHeight = '100vh';
             }
+
+            appContainer.style.width = '100vw';
+            appContainer.style.height = '100vh';
+            appContainer.style.maxWidth = '100vw';
+            appContainer.style.maxHeight = '100vh';
         };
 
-        setTimeout(stretchWebamp, 300);
-        setTimeout(stretchWebamp, 1000);
-        window.addEventListener('resize', stretchWebamp);
+        setTimeout(forceFullViewport, 200);
+        setTimeout(forceFullViewport, 600);
+        setTimeout(forceFullViewport, 1200);
+        window.addEventListener('resize', forceFullViewport);
 
         let deferredPrompt = null;
         const installBtn = document.getElementById('install-btn');
