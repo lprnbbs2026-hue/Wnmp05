@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PlayWinamp dengan Webamp</title>
+</head>
+<body>
+    <!-- Kontainer tempat Winamp akan dirender -->
+    <div id="winamp-container"></div>
+
+    <!-- Muat library Webamp dari CDN -->
+    <script src="https://unpkg.com/webamp@1.5.0/built/webamp.bundle.min.js"></script>
+    <script>
+        // Inisialisasi Webamp
+        const Webamp = window.Webamp;
+        const webamp = new Webamp({
+            // Anda bisa menambahkan daftar trek audio di sini
+            // initialTracks: [{ metaData: { artist: "Artis", title: "Lagu" }, url: "lagu.mp3" }]
+        });
+
+        // Render ke dalam kontainer
+        webamp.renderWhenReady(document.getElementById('winamp-container'));
+    </script>
+</body>
+</html>
