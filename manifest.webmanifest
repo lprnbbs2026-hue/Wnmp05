@@ -1,0 +1,24 @@
+{
+  "name": "Wnmp05",
+  "short_name": "Wnmp05",
+  "description": "Aplikasi Winamp Web dengan dukungan PWA",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#1f1f1f",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
