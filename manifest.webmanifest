@@ -1,12 +1,16 @@
 {
   "name": "Wnmp05",
   "short_name": "Wnmp05",
-  "description": "Aplikasi Winamp Web dengan dukungan PWA",
+  "description": "Aplikasi Winamp Web dengan pengalaman seperti native app",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#1f1f1f",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "orientation": "portrait",
+  "background_color": "#0b1020",
+  "theme_color": "#111827",
   "lang": "id",
+  "categories": ["music", "entertainment"],
   "icons": [
     {
       "src": "./icon.svg",

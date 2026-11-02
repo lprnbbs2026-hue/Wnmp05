@@ -4,21 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1f1f1f">
-    <meta name="description" content="Aplikasi Winamp berbasis Webamp dengan fitur PWA">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111827">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Aplikasi Winamp berbasis Webamp dengan pengalaman seperti native app">
     <title>PlayWinamp dengan Webamp</title>
     <link rel="manifest" href="./manifest.webmanifest">
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: rgba(255,255,255,0.06);
+            --text: #f3f4f6;
+            --accent: #fbbf24;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top, #182235 0%, var(--bg) 38%, #030712 100%);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .app-shell {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        #winamp-container {
+            width: min(100%, 980px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 60px;
+        }
+
+        .native-actions {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 10px;
+            z-index: 50;
+        }
+
+        .native-actions button {
+            appearance: none;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(17, 24, 39, 0.85);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .native-actions button:hover {
+            transform: translateY(-1px);
+        }
+
+        .native-actions button[hidden] {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+            .app-shell {
+                padding: 12px;
+            }
+
+            .native-actions {
+                top: 12px;
+                right: 12px;
+                gap: 8px;
+            }
+
+            .native-actions button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="winamp-container"></div>
+    <div class="app-shell">
+        <div class="native-actions">
+            <button id="install-btn" hidden>Install App</button>
+            <button id="fullscreen-btn" type="button">Full Screen</button>
+        </div>
+
+        <div id="winamp-container"></div>
+    </div>
 
     <script src="https://unpkg.com/webamp@1.5.0/built/webamp.bundle.min.js"></script>
     <script>
-        const Webamp = window.Webamp;
         const webamp = new Webamp({
             // initialTracks: [{ metaData: { artist: "Artis", title: "Lagu" }, url: "lagu.mp3" }]
         });
 
         webamp.renderWhenReady(document.getElementById('winamp-container'));
+
+        let deferredPrompt = null;
+        const installBtn = document.getElementById('install-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            installBtn.hidden = false;
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('Install prompt result:', outcome);
+            deferredPrompt = null;
+            installBtn.hidden = true;
+        });
+
+        fullscreenBtn.addEventListener('click', async () => {
+            try {
+                if (!document.fullscreenElement) {
+                    await document.documentElement.requestFullscreen();
+                } else {
+                    await document.exitFullscreen();
+                }
+            } catch (error) {
+                console.error('Fullscreen error:', error);
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            fullscreenBtn.textContent = document.fullscreenElement ? 'Exit Full Screen' : 'Full Screen';
+        });
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
